@@ -1,0 +1,229 @@
+<h1>Pokemon APP</h1>
+
+<div class="card">
+    <p-table
+        #poketable
+        [value]="listPokemon"
+        [paginator]="true"
+        [rows]="10"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        [rowsPerPageOptions]="[10, 20, 50]"
+        [showCurrentPageReport]="true"
+        [globalFilterFields]="['name']"
+    >
+        <ng-template pTemplate="caption">
+            <div class="flex">
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="poketable.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Filtrar pokemon"
+                    />
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name" style="width: 20%">
+                    Nombre <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th style="width: 20%">Detalles</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-pokemon>
+            <tr>
+                <td>{{ pokemon.name }}</td>
+                <td>
+                    <div class="card flex justify-content-center">
+                        <p-button
+                            (click)="showDialog()"
+                            (click)="hideSearch = true"
+                            (click)="getPokemonDataModal(pokemon.name)"
+                            icon="pi pi-external-link"
+                            label="Detalles"
+                        ></p-button>
+                        <p-dialog
+                            *ngIf="namePokemon"
+                            header="Informacion de {{ namePokemon }}"
+                            [(visible)]="visible"
+                            [breakpoints]="{ '960px': '75vw' }"
+                            [style]="{ width: '50vw' }"
+                            [draggable]="false"
+                            [resizable]="false"
+                            [modal]="true"
+                        >
+                            <div class="card">
+                                <p-carousel
+                                    [value]="sprites"
+                                    [numVisible]="2"
+                                    [numScroll]="1"
+                                    [circular]="true"
+                                    [responsiveOptions]="responsiveOptions"
+                                >
+                                    <ng-template let-pokemon pTemplate="item">
+                                        <div
+                                            class="border-1 surface-border border-round m-2 text-center py-5 px-3"
+                                        >
+                                            <div class="mb-3">
+                                                <img
+                                                    src="{{ pokemon }}"
+                                                    [alt]=""
+                                                    class="w-6 shadow-2"
+                                                />
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </p-carousel>
+                            </div>
+                            <div>
+                                <ul>
+                                    <li>Nombre: {{ namePokemon }}</li>
+                                    <li>ID Pokedex: {{ id }}</li>
+                                    <li>Peso: {{ weight }}</li>
+                                    <li>Altura: {{ height }}</li>
+                                    <li>Experiencia Base: {{ baseExperience }}</li>
+                                </ul>
+                            </div>
+                            <br />
+                            <hr />
+                            <ol>
+                                <h3>Habilidades</h3>
+                                <br />
+                                <li class="centrar" *ngFor="let pokemon of abilities">
+                                    {{ pokemon.ability.name }}
+                                </li>
+                                <br />
+                                <hr />
+                                <div class="container">
+                                    <h3>Aparicion en versiones</h3>
+                                    <br />
+                                    <p-scroller
+                                        [items]="gameIndices"
+                                        [itemSize]="50"
+                                        scrollHeight="200px"
+                                        styleClass="border-1 surface-border"
+                                        [style]="{ width: '200px', height: '200px' }"
+                                    >
+                                        <ng-template
+                                            pTemplate="item"
+                                            let-item
+                                            let-options="options"
+                                        >
+                                            <div
+                                                class="flex align-items-center p-2"
+                                                [ngClass]="{ 'surface-ground': options.odd }"
+                                                style="height: 50px"
+                                            >
+                                                {{ item.version.name }}
+                                            </div>
+                                        </ng-template>
+                                    </p-scroller>
+                                </div>
+                                <br />
+                                <hr />
+                                <div class="container">
+                                    <h3>Movimientos</h3>
+                                    <br />
+                                    <p-scroller
+                                        [items]="moves"
+                                        [itemSize]="50"
+                                        scrollHeight="200px"
+                                        styleClass="border-1 surface-border"
+                                        [style]="{ width: '200px', height: '200px' }"
+                                    >
+                                        <ng-template
+                                            pTemplate="item"
+                                            let-item
+                                            let-options="options"
+                                        >
+                                            <div
+                                                class="flex align-items-center p-2"
+                                                [ngClass]="{ 'surface-ground': options.odd }"
+                                                style="height: 50px"
+                                            >
+                                                {{ item.move.name }}
+                                            </div>
+                                        </ng-template>
+                                    </p-scroller>
+                                </div>
+                                <br />
+                                <hr />
+                                <h3>Tipo/s</h3>
+                                <br />
+                                <li class="centrar" *ngFor="let pokemon of typesPokemon">
+                                    {{ pokemon.type.name }}
+                                </li>
+                                <br />
+                                <hr />
+                                <h3>Stats</h3>
+                                <li class="centrar" *ngFor="let pokemon of stats">
+                                    <h4>{{ pokemon.stat.name }}</h4>
+                                    Stat base: {{ pokemon.base_stat }} | Esfuerzo:
+                                    {{ pokemon.effort }}
+                                </li>
+                            </ol>
+                        </p-dialog>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+        </ng-template>
+        <ng-template pTemplate="paginatorright">
+            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-table>
+</div>
+
+<div>
+    <h2>Buscando Pokemon</h2>
+    <p-autoComplete
+        [(ngModel)]="pokemonSelected"
+        [suggestions]="suggestions"
+        (completeMethod)="search($event)"
+    ></p-autoComplete>
+    <p-button
+        (click)="getPokemonData()"
+        (click)="hideSearch = false"
+        label="Buscar Pokemon"
+    ></p-button>
+</div>
+
+<div *ngIf="namePoke2 && hideSearch == false">
+    <img src="{{ imgFrontPokemon }}" alt="foto default" />
+    <img src="{{ imgBackPokemon }}" alt="foto default" />
+    <ul>
+        <li>Nombre: {{ namePoke2 }}</li>
+        <li>ID Pokedex: {{ id }}</li>
+        <li>Peso: {{ weight }}</li>
+        <li>Altura: {{ height }}</li>
+        <li>Experiencia Base: {{ baseExperience }}</li>
+    </ul>
+    <ul>
+        <h4>Habilidades</h4>
+        <li *ngFor="let pokemon of abilities">
+            {{ pokemon.ability.name }}
+        </li>
+        <h4>Aparicion en versiones</h4>
+        <li *ngFor="let pokemon of gameIndices">
+            {{ pokemon.version.name }}
+        </li>
+        <h4>Movimientos</h4>
+        <li *ngFor="let pokemon of moves">
+            {{ pokemon.move.name }}
+        </li>
+        <h4>Tipo/s</h4>
+        <li *ngFor="let pokemon of typesPokemon">
+            {{ pokemon.type.name }}
+        </li>
+        <h4>Stats</h4>
+        <li *ngFor="let pokemon of stats">
+            <h4>{{ pokemon.stat.name }}</h4>
+            Stat base: {{ pokemon.base_stat }} | Esfuerzo: {{ pokemon.effort }}
+        </li>
+    </ul>
+</div>

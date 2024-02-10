@@ -1,0 +1,43 @@
+img {
+  width: 250px;
+  height: 250px;
+}
+
+#identified {
+  display: block;
+  width: 90%;
+  margin: auto;
+}
+
+h3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.centrar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.container {
+  display: grid;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.box {
+  border: 5px solid darkblue;
+  height: 1;
+  overflow: auto;
+}
+
+:host ::ng-deep {
+  .p-scroller-viewport {
+    flex: none;
+  }
+}
